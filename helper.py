@@ -71,6 +71,8 @@ class Batches:
         dx and dy must be n-dimensional lists<br>
         eg: addRows([[1,1]], [[1]])
         '''
+        dx = dx.copy() # ????
+        dy = dy.copy()
         if(self.x is False or self.y is False):
             self.x = np.array(dx)
             self.y = np.array(dy)
@@ -82,7 +84,7 @@ class Batches:
         '''
         return (x, y)
         '''
-        return (self.x, self.y)
+        return (self.x.copy(), self.y.copy())
 
 
 # print several weight matrices in one line

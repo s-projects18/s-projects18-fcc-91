@@ -1,4 +1,5 @@
 import numpy as np
+import itertools
 import helper as hlp
 import sys
 
@@ -7,28 +8,47 @@ bt = hlp.Batches()
 weight1=0
 weight2=0
 
+# TODO: poor player: 
+# at move 751 predictions get wrong for a while
+# no error, no warnings...
+'''
+701 [0.0, 0.99999, 0.00034]
+751 [0.0, 0.0, 0.0]
+801 [0.0, 0.0, 1.0]
+851 [0.0, 0.0, 0.0]
+901 [0.0, 1.0, 0.0]
+'''
 def player(prev_play, opponent_history=[]):
   # --------- CONFIG ---------
   # the more, the better and slower
-  n = 50      # train on every n-th move
+  n = 1000      # train on every n-th move
   epochs = 10 # how often run through traning loop
 
   global weight1, weight2
   info = False
   
-  if(prev_play=='R'):
-    d = [[1,0,0]]
-  elif(prev_play=='P'):
-    d = [[0,1,0]]
-  else:
-    d = [[0,0,1]]
+  d = [[0,0,0]]
+  i = "RPS".index(prev_play)
+  d[0][i] = 1
 
-  bt.addRows(d, d)
+  # TEST with cartesian -> out of memory
+  # cartesian product (order matters, with replacement)
+  dataY = list(itertools.product([0,1], repeat=3))
+  dataY = list(filter(lambda x: x[i]==1, dataY))
+  dataY = [list(x) for x in dataY] # tuples 2 list
+
+  for dy in dataY:
+    bt.addRows(d, [dy])  
+
+  # ????
+  # model fails at quincy/poor2, but basically works with poor!
+  #bt.addRows(d, d)
   X, y = bt.getData()
+
   # we will retrain our model not on every move
   pr = []
 
-  if len(X) % n == 1:
+  if len(X) % n == 0:
     weight1, weight2 = hlp.train(X, y, False, False, epochs)
     info = str(len(X))
 

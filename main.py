@@ -7,6 +7,10 @@ from unittest import main
 def poor(prev_play):
     return 'P'
 
+import random    
+def poor2(prev_opponent_play):
+    return random.choice(['R', 'P'])
+
 #play(player, quincy, 1000) 
 #play(player, abbey, 1000)
 #play(player, kris, 1000)
